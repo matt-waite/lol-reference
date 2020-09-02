@@ -17,8 +17,14 @@ def getCell(row, col):
 
 if __name__ == "__main__":
     #output_headers('../raw/2014_OraclesElixir.csv')
-    
-    with open('../event/EU_LCS_Spring_2014_Playoffs.csv') as csvfile:
+    match_totals = {}
+    with open('../raw/2014_OraclesElixir.csv') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            print(f"{getCell(row, 'Player')}: {getCell(row, 'Champion')}")
+            event_key = f"{getCell(row, 'League')} {getCell(row, 'Year')} {getCell(row, 'Split')}"
+            if (getCell(row, 'PlayerId') == "100" or getCell(row, 'PlayerId') == "200"):
+                if (event_key not in match_totals):
+                    match_totals[event_key] = [row.values()]
+                else:
+                    match_totals[event_key].append(row.values())
+    print(", ".join(match_totals["EU LCS 2014 Summer"][1]))
