@@ -1,5 +1,8 @@
 import csv
 import oracles_headers
+import os
+from pymongo import MongoClient
+
 cols = oracles_headers.oracles_columns
 
 def output_headers(filename):
@@ -15,8 +18,21 @@ def output_headers(filename):
 def getCell(row, col):
     return row[cols[col]]
 
+def createDB():
+    if not os.path.isdir("/data/db"):
+        os.mkdir("/data")
+        os.mkdir("/data/db")
+
+def connectDB():
+    client = MongoClient()
+    return client["game-data"]
+
 if __name__ == "__main__":
     #output_headers('../raw/2014_OraclesElixir.csv')
+    createDB()
+    db = connectDB()
+    print(db.list_collection_names())
+
     match_totals = {}
     with open('../raw/2014_OraclesElixir.csv') as csvfile:
         reader = csv.DictReader(csvfile)
