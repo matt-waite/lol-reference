@@ -25,12 +25,13 @@ def get_players(filename):
                     players[player].append(reader.line_num)
     return players
 
-def get_player_games(file, name):
-    games = []
-    with open(file) as csvfile:
+def get_player_games(filename):
+    players = {}
+    with open(filename) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            if (row[cols['Player']] == name):
+            if (row[cols['Position']] != 'team'):
+                player = row[cols['Player']]
                 team = row[cols['Team']]
                 position = row[cols['Position']]
                 champion = row[cols['Champion']]
@@ -38,8 +39,8 @@ def get_player_games(file, name):
                 kills = row[cols['Kills']]
                 deaths = row[cols['Deaths']]
                 assists = row[cols['Assists']]
-                games.append({
-                    "player": name,
+                game = {
+                    "player": player,
                     "team": team,
                     "position": position,
                     "champion": champion,
@@ -47,20 +48,39 @@ def get_player_games(file, name):
                     "kills": int(kills),
                     "deaths": int(deaths),
                     "assists": int(assists)
-                })
-    return games
+                }
+
+                if (player != None and player not in players):
+                    players[player] = [game]
+                else:
+                    players[player].append(game)
+
+    return players
 
 if __name__ == "__main__":
     db = database.connect_db()
-    event = "../event/EU_LCS_Summer_2014.csv"
-    players = get_players(event)
-    for player in players:
-        games = get_player_games(event, player)
-        wins = 0
-        losses = 0
-        for game in games:
-            if game['result']:
-                wins += 1
-            else:
-                losses += 1
-        print(f"{player}: ({wins}-{losses})")
+    eventpath = "../event"
+    events = [
+        "EU_CS_Spring_2014",
+        "EU_CS_Spring_2014_Playoffs",
+        "EU_LCS_Spring_2014",
+        "EU_LCS_Spring_2014_Playoffs",
+        "EU_CS_Summer_2014",
+        "EU_CS_Summer_2014_Playoffs",
+        "EU_LCS_Summer_2014",
+        "EU_LCS_Summer_2014_Playoffs",
+        "NA_CS_Spring_2014",
+        "NA_LCS_Spring_2014",
+        "NA_LCS_Spring_2014_Playoffs",
+        "NA_CS_Summer_2014",
+        "NA_LCS_Summer_2014",
+        "NA_LCS_Summer_2014_Playoffs",
+        #"World_Championship_2014"
+    ]
+    for event in events:
+        playergames = get_player_games(f"{eventpath}/{event}.csv")
+        for player in playergames.keys():
+            for game in playergames[player]:
+                db.PlayerGames.insert_one(game)
+        print("...Game insertion complete")
+        
