@@ -7,58 +7,56 @@ from pymongo import MongoClient
 
 cols = oracles_headers.oracles_columns
 
-def get_players(filename):
-    players = {}
+def get_teams(filename):
+    teams = {}
     with open(filename) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            if (row[cols['Position']] != 'team'):
-                player = row[cols['Player']]
-                if (player not in players):
-                    players[player] = [reader.line_num]
-                else:
-                    players[player].append(reader.line_num)
-    return players
-
-def get_player_games(filename):
-    players = {}
-    with open(filename) as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            if (row[cols['Position']] != 'team'):
-                gameid = row[cols['GameId']]
-                player = row[cols['Player']]
+            if (row[cols['Position']] == 'team'):
                 team = row[cols['Team']]
-                position = row[cols['Position']]
-                champion = row[cols['Champion']]
+                if (team not in teams):
+                    teams[team] = [reader.line_num]
+                else:
+                    teams[team].append(reader.line_num)
+    return teams
+
+def get_team_games(filename):
+    teams = {}
+    with open(filename) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            if (row[cols['Position']] == 'team'):
+                gameid = row[cols['GameId']]
+                team = row[cols['Team']]
+                side = row[cols['Side']]
                 result = row[cols['Result']]
+                gamelength = row[cols['GameLength']]
                 kills = row[cols['Kills']]
                 deaths = row[cols['Deaths']]
                 assists = row[cols['Assists']]
                 game = {
                     "gameId": gameid,
-                    "player": player,
                     "team": team,
-                    "position": position,
-                    "champion": champion,
+                    "side": side,
                     "result": False if result == "0" else True,
+                    "gamelength": int(gamelength),
                     "kills": int(kills),
                     "deaths": int(deaths),
                     "assists": int(assists)
                 }
 
-                if (player != None and player not in players):
-                    players[player] = [game]
+                if (team != None and team not in teams):
+                    teams[team] = [game]
                 else:
-                    players[player].append(game)
+                    teams[team].append(game)
+    
+    return teams
 
-    return players
-
-def insert_player_games(db, filename):
-    playergames = get_player_games(filename)
-    for player in playergames.keys():
-        for game in playergames[player]:
-            db.PlayerGames.insert_one(game)
+def insert_team_games(db, filename):
+    teamgames = get_team_games(filename)
+    for team in teamgames.keys():
+        for game in teamgames[team]:
+            db.TeamGames.insert_one(game)
 
 if __name__ == "__main__":
     db = database.connect_db()
@@ -81,6 +79,5 @@ if __name__ == "__main__":
         "World_Championship_2014"
     ]
     for event in events:
-        insert_player_games(db, f"{eventpath}/{event}.csv")
+        insert_team_games(db, f"{eventpath}/{event}.csv")
         print("...Game insertion complete")
-        
