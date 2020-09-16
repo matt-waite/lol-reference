@@ -1,9 +1,12 @@
 import csv
 
 import database
-import oracles_headers
 
 from pymongo import MongoClient
+from classes import oracles_headers
+
+from classes import team_row
+TeamRow = team_row.TeamRow
 
 cols = oracles_headers.oracles_columns
 
@@ -26,30 +29,12 @@ def get_team_games(filename):
         reader = csv.DictReader(csvfile)
         for row in reader:
             if (row[cols['Position']] == 'team'):
-                gameid = row[cols['GameId']]
-                team = row[cols['Team']]
-                side = row[cols['Side']]
-                result = row[cols['Result']]
-                gamelength = row[cols['GameLength']]
-                kills = row[cols['Kills']]
-                deaths = row[cols['Deaths']]
-                assists = row[cols['Assists']]
-                game = {
-                    "gameId": gameid,
-                    "team": team,
-                    "side": side,
-                    "result": False if result == "0" else True,
-                    "gamelength": int(gamelength),
-                    "kills": int(kills),
-                    "deaths": int(deaths),
-                    "assists": int(assists)
-                }
-
+                teamgame = TeamRow(row)
+                team = teamgame.Team()
                 if (team != None and team not in teams):
-                    teams[team] = [game]
+                    teams[team] = [teamgame.GetDatabaseObject()]
                 else:
-                    teams[team].append(game)
-    
+                    teams[team].append(teamgame.GetDatabaseObject())
     return teams
 
 def insert_team_games(db, filename):
@@ -78,6 +63,14 @@ if __name__ == "__main__":
         "NA_LCS_Summer_2014_Playoffs",
         "World_Championship_2014"
     ]
+
+    '''
+    teamgames = get_team_games("../event/EU_LCS_Spring_2014.csv")
+    for team in teamgames.keys():
+        for game in teamgames[team]:
+            print(f"{team}: {game['kills']}/{game['deaths']}/{game['assists']}")
+    '''
+
     for event in events:
         insert_team_games(db, f"{eventpath}/{event}.csv")
         print("...Game insertion complete")
