@@ -1,9 +1,12 @@
 import csv
 
 import database
-import oracles_headers
 
 from pymongo import MongoClient
+from classes import oracles_headers
+
+from classes import player_row
+PlayerRow = player_row.PlayerRow
 
 cols = oracles_headers.oracles_columns
 
@@ -26,32 +29,12 @@ def get_player_games(filename):
         reader = csv.DictReader(csvfile)
         for row in reader:
             if (row[cols['Position']] != 'team'):
-                gameid = row[cols['GameId']]
-                player = row[cols['Player']]
-                team = row[cols['Team']]
-                position = row[cols['Position']]
-                champion = row[cols['Champion']]
-                result = row[cols['Result']]
-                kills = row[cols['Kills']]
-                deaths = row[cols['Deaths']]
-                assists = row[cols['Assists']]
-                game = {
-                    "gameId": gameid,
-                    "player": player,
-                    "team": team,
-                    "position": position,
-                    "champion": champion,
-                    "result": False if result == "0" else True,
-                    "kills": int(kills),
-                    "deaths": int(deaths),
-                    "assists": int(assists)
-                }
-
+                playergame = PlayerRow(row)
+                player = playergame.Player()
                 if (player != None and player not in players):
-                    players[player] = [game]
+                    players[player] = [playergame.GetDatabaseObject()]
                 else:
-                    players[player].append(game)
-
+                    players[player].append(playergame.GetDatabaseObject())
     return players
 
 def insert_player_games(db, filename):
@@ -80,7 +63,16 @@ if __name__ == "__main__":
         "NA_LCS_Summer_2014_Playoffs",
         "World_Championship_2014"
     ]
+
+    '''
+    playergames = get_player_games("../event/NA_LCS_Summer_2014.csv")
+    for player in playergames.keys():
+        kills = 0
+        for game in playergames[player]:
+            kills += game['kills']
+        print(f"{player}: {kills}")
+    '''
+
     for event in events:
         insert_player_games(db, f"{eventpath}/{event}.csv")
         print("...Game insertion complete")
-        
