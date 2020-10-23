@@ -1,0 +1,22 @@
+{
+  "name": "lol-reference",
+  "version": "0.1.0",
+  "description": "An alternative League of Legends statistics site in the vein of the Sports-Reference resources",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matt-waite/lol-reference.git"
+  },
+  "author": "Matthew Waite",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matt-waite/lol-reference/issues"
+  },
+  "homepage": "https://github.com/matt-waite/lol-reference#readme",
+  "dependencies": {
+    "mongodb": "^3.6.2"
+  }
+}
