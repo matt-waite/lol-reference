@@ -7,26 +7,30 @@ const mongourl = 'mongodb://localhost:27017';
 const dbname = 'game-data';
 const client = new MongoClient(mongourl);
 
-async function run() {
+async function getPlayerGames(db, playerName) {
   let games = [];
   try {
-    await client.connect();
-
-    const database = client.db(dbname);
-    const collection = database.collection("PlayerGames");
-
-    const query = { player: 'Zorozero'};
+    const collection = db.collection("PlayerGames");
+    const query = { player: playerName };
 
     games = await collection.find(query).toArray();
-    //console.log(games);
   } finally {
-    await client.close();
     return games;
   }
 }
 
-var games = run();
-games.then(retVal => console.log(retVal));
+async function main() {
+  await client.connect();
+  const database = client.db(dbname);
+
+  let player1 = getPlayerGames(database, "WildTurtle");
+  let player2 = getPlayerGames(database, "Sneaky");
+  Promise.all([player1, player2]).then(retVal => console.log(`${retVal[0].length} - ${retVal[1].length}`));
+
+  await client.close();
+}
+
+main();
 
 /*
 const server = http.createServer((req, res) => {
