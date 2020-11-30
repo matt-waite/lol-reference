@@ -1,6 +1,11 @@
 {
   "name": "lol-reference",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "An alternative League of Legends statistics site in the vein of the Sports-Reference resources",
+  "homepage": "https://github.com/matt-waite/lol-reference#readme",
+  "author": "Matthew Waite",
+  "license": "MIT",
+  "main": "app.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,6 +13,13 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matt-waite/lol-reference.git"
+  },
+  "bugs": {
+    "url": "https://github.com/matt-waite/lol-reference/issues"
   },
   "private": true,
   "dependencies": {
@@ -19,6 +31,7 @@
     "@angular/platform-browser": "~11.0.1",
     "@angular/platform-browser-dynamic": "~11.0.1",
     "@angular/router": "~11.0.1",
+    "mongodb": "^3.6.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
