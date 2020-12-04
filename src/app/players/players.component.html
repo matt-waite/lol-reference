@@ -1,8 +1,20 @@
-<h2>{{player.name | uppercase}} Details ({{player.rating}})</h2>
-<div><span>id: </span>{{player.id}}</div>
-<div><span>name: </span>{{player.name}}</div>
-<div>
-    <label>Community Rating: 
-        <input [(ngModel)]="player.rating" placeholder="rating"/>
-    </label>
+<h2>All Players</h2>
+
+<ul class="players">
+    <li *ngFor="let player of players" 
+        [class.selected]="player === selectedPlayer"
+        (click)="onSelect(player)">
+        <span class="badge">{{player.id}}</span> {{player.name}}
+    </li>
+</ul>
+
+<div *ngIf="selectedPlayer">
+    <h2>{{selectedPlayer.name}} Details</h2>
+    <div><span>Id:&nbsp;</span>{{selectedPlayer.id}}</div>
+    <div><span>Rating:&nbsp;</span>{{selectedPlayer.rating}}</div>
+    <div>
+        <label>Update Rating:&nbsp;
+            <input [(ngModel)]="selectedPlayer.rating" placeholder="rating"/>
+        </label>
+    </div>
 </div>
