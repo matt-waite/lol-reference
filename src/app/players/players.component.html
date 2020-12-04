@@ -1,0 +1,8 @@
+<h2>{{player.name | uppercase}} Details ({{player.rating}})</h2>
+<div><span>id: </span>{{player.id}}</div>
+<div><span>name: </span>{{player.name}}</div>
+<div>
+    <label>Community Rating: 
+        <input [(ngModel)]="player.rating" placeholder="rating"/>
+    </label>
+</div>

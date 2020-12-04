@@ -5,7 +5,6 @@
   "homepage": "https://github.com/matt-waite/lol-reference#readme",
   "author": "Matthew Waite",
   "license": "MIT",
-  "main": "app.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
