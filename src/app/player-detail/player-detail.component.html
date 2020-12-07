@@ -1,0 +1,10 @@
+<div *ngIf="player">
+    <h2>{{player.name}} Details</h2>
+    <div><span>Id:&nbsp;</span>{{player.id}}</div>
+    <div><span>Rating:&nbsp;</span>{{player.rating}}</div>
+    <div>
+        <label>Update Rating:&nbsp;
+            <input [(ngModel)]="player.rating" placeholder="rating"/>
+        </label>
+    </div>
+</div>

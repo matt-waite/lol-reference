@@ -8,13 +8,4 @@
     </li>
 </ul>
 
-<div *ngIf="selectedPlayer">
-    <h2>{{selectedPlayer.name}} Details</h2>
-    <div><span>Id:&nbsp;</span>{{selectedPlayer.id}}</div>
-    <div><span>Rating:&nbsp;</span>{{selectedPlayer.rating}}</div>
-    <div>
-        <label>Update Rating:&nbsp;
-            <input [(ngModel)]="selectedPlayer.rating" placeholder="rating"/>
-        </label>
-    </div>
-</div>
+<app-player-detail [player]="selectedPlayer"></app-player-detail>
